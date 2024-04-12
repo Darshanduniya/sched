@@ -1,0 +1,33 @@
+import sched
+import time
+import subprocess
+
+def is_airflow_running(url):
+    # Implement your logic to check if Airflow is running
+    pass
+
+# URL for Airflow
+url = "http:/10.189.87.567:4356/"
+
+def check_and_restart_airflow():
+    if is_airflow_running(url):
+        print(url)
+        print("Airflow is up and running")
+    else:
+        print("Airflow is not up and running")
+        command = "airflow db init"
+        result = subprocess.run(command, shell=True)
+        print(result)
+        print("Command executed successfully")
+
+# Create scheduler instance
+scheduler = sched.scheduler(time.time, time.sleep)
+
+def run_script(sc):
+    check_and_restart_airflow()
+    # Reschedule the script to run after 3 minutes
+    scheduler.enter(180, 1, run_script, (sc,))
+
+# Schedule the script to run immediately
+scheduler.enter(0, 1, run_script, (scheduler,))
+scheduler.run()
